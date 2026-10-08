@@ -2,7 +2,7 @@
 
 # Project Detailed Description
 
-As this is my 1st project, I'm focusing on learning basic concepts of Software Development. I've created an Individual food delivery application that solves a focused operational problem. I started with problem understanding and Design Thinking, models core entities, implementing CRUD operations and validation, storing data in a relational database, and producing a simple usable interface. The project is intentionally scoped to strengthen my programming, OOP, collections/data structures, SQL, Git/GitHub, debugging, documentation and basic HTTP/API concepts.
+As this is my first project, I'm focusing on learning the basic concepts of software development. I want to create an individual food delivery application that solves a focused operational problem. I'll start by understanding the problem and applying Design Thinking, then model core entities, implement CRUD operations and validation, store data in a relational database, and produce a simple, usable interface. The project is intentionally scoped to strengthen my programming, OOP, collections/data structures, SQL, Git/GitHub, debugging, documentation, and basic HTTP/API concepts.
 
 # High-Level Features
 
