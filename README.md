@@ -1,21 +1,136 @@
-# Food_Delivery_Order_Tracker
+# Food Delivery Order Management System
 
-# Project Detailed Description
+A simple food delivery application developed as an individual learning project. The system focuses on managing customers, menu items, and orders while practicing core software-development concepts.
 
-As this is my first project, I'm focusing on learning the basic concepts of software development. I want to create an individual food delivery application that solves a focused operational problem. I'll start by understanding the problem and applying Design Thinking, then model core entities, implement CRUD operations and validation, store data in a relational database, and produce a simple, usable interface. The project is intentionally scoped to strengthen my programming, OOP, collections/data structures, SQL, Git/GitHub, debugging, documentation, and basic HTTP/API concepts.
+## Problem Statement
 
-# High-Level Features
+Small food-delivery operations need a simple way to manage customer information, menu items, orders, and pending work.
 
-User/profile management; core records and CRUD; search/filter; validation; simple reports/dashboard; relational database; exception handling; Git/GitHub repository; README; basic test cases.
+This application provides basic CRUD operations, validation, search/filtering, and simple reports through a web interface.
 
-# High-Level User Stories
+## Features
 
-As a user, I want to create and update my records so that information stays current. As a user, I want to search/filter records so that I can find information quickly. As a mentor/admin, I want simple reports so that I can review activity and identify pending work.
+- Customer/profile management
+- Menu item management
+- Food order management
+- CRUD operations
+- Search and filtering
+- Input and business validation
+- Order status tracking
+- Simple dashboard/reports
+- Exception handling
+- Relational database
+- Basic REST API
+- Basic test cases
 
-# Learning Outcomes / Industry Skills
+## Core Entities
 
-Programming fundamentals; OOP; data structures/collections; SQL/DBMS; input validation; debugging; Git/GitHub; basic web/API concepts; documentation; problem decomposition; Design Thinking.
+```text
+Customer
+MenuItem
+Order
+OrderItem
+```
 
-# Tech Stack
+Relationships:
 
-Python + PostgreSQL/SQLite + simple Web UI OR Java + PostgreSQL + simple Web UI
+```text
+Customer 1 ──── * Order
+Order    1 ──── * OrderItem
+MenuItem 1 ──── * OrderItem
+```
+
+## Tech Stack
+
+- **Backend:** Python + Flask/FastAPI
+- **Database:** SQLite / PostgreSQL
+- **Frontend:** HTML, CSS, JavaScript
+- **Testing:** pytest
+- **Version Control:** Git + GitHub
+
+## Project Structure
+
+```text
+food-delivery-tracker/
+├── app/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   ├── repositories/
+│   └── validators/
+├── tests/
+├── database/
+├── templates/
+├── static/
+├── requirements.txt
+├── README.md
+└── run.py
+```
+
+## Main Order Flow
+
+```text
+PENDING
+   ↓
+CONFIRMED
+   ↓
+PREPARING
+   ↓
+OUT_FOR_DELIVERY
+   ↓
+DELIVERED
+```
+
+Orders may also be cancelled according to business rules.
+
+## Learning Objectives
+
+This project is intended to strengthen:
+
+- Programming fundamentals
+- OOP and data structures
+- SQL and relational databases
+- CRUD and validation
+- Exception handling and debugging
+- HTTP/API concepts
+- Git/GitHub
+- Testing and documentation
+- Problem decomposition and Design Thinking
+
+## Development Roadmap
+
+- [ ] Requirements & Design
+- [ ] Database Design
+- [ ] Customer CRUD
+- [ ] Menu CRUD
+- [ ] Order Management
+- [ ] Validation & Exceptions
+- [ ] Search & Filtering
+- [ ] REST API
+- [ ] Dashboard
+- [ ] Simple Web UI
+- [ ] Testing
+- [ ] Documentation
+
+## Out of Scope
+
+Version 1 will not include:
+
+- Online payments
+- GPS/live tracking
+- Delivery partner management
+- Reviews/ratings
+- Notifications
+- Advanced authentication
+- Complex analytics
+
+## Project Status
+
+**Status:** Planning / Initial Development
+
+This project is primarily intended for learning and is not a production-ready food delivery platform.
+
+## Author
+
+**Name:** Sumit Singh Bora 
+**GitHub:** `<your-github-profile>`
