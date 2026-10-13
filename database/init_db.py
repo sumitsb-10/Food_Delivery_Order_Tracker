@@ -11,7 +11,6 @@ connection.execute("PRAGMA foreign_keys = ON")
 
 with open(schema_path, "r", encoding="utf-8") as file:
     schema = file.read()
-
 connection.executescript(schema)
 
 connection.close()
