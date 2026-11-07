@@ -186,3 +186,41 @@ def test_create_menu_item_rejects_invalid_availability(client):
 
     assert response.status_code == 400
     assert "error" in response.get_json()
+
+
+def test_create_order_api_rejects_non_object_item(client, sample_records):
+    response = client.post(
+        "/orders",
+        json={
+            "customer_id": sample_records["customer_id"],
+            "items": [123],
+        },
+    )
+
+    assert response.status_code == 400
+    assert "error" in response.get_json()
+
+
+def test_create_order_api_rejects_null_item(client, sample_records):
+    response = client.post(
+        "/orders",
+        json={
+            "customer_id": sample_records["customer_id"],
+            "items": [None],
+        },
+    )
+
+    assert response.status_code == 400
+    assert "error" in response.get_json()
+
+
+def test_create_order_api_rejects_missing_items(client, sample_records):
+    response = client.post(
+        "/orders",
+        json={
+            "customer_id": sample_records["customer_id"],
+        },
+    )
+
+    assert response.status_code == 400
+    assert "error" in response.get_json()

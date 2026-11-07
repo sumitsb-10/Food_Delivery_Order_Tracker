@@ -1,5 +1,5 @@
 
-from app.repositories.database import get_connection
+from app.repositories.database import connection_scope, transaction
 
 
 def create_order_item(
@@ -19,17 +19,15 @@ def create_order_item(
         )
         VALUES (?, ?, ?, ?)
         """,
-        (order_id, menu_item_id, quantity, price),
+        (order_id, menu_item_id, quantity, str(price)),
     )
 
     return cursor.lastrowid
 
 
 def get_order_items(order_id):
-    connection = get_connection()
-
-    try:
-        items = connection.execute(
+    with connection_scope() as connection:
+        return connection.execute(
             """
             SELECT
                 order_items.id,
@@ -47,15 +45,9 @@ def get_order_items(order_id):
             (order_id,),
         ).fetchall()
 
-        return items
-    finally:
-        connection.close()
-
 
 def delete_order_items(order_id):
-    connection = get_connection()
-
-    try:
+    with transaction() as connection:
         cursor = connection.execute(
             """
             DELETE FROM order_items
@@ -64,10 +56,4 @@ def delete_order_items(order_id):
             (order_id,),
         )
 
-        connection.commit()
         return cursor.rowcount
-    except Exception:
-        connection.rollback()
-        raise
-    finally:
-        connection.close()

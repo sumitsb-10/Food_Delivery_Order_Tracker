@@ -1,13 +1,13 @@
-from app.repositories.database import get_connection
 
+from decimal import Decimal
+
+from app.repositories.database import get_connection
 from app.repositories.customer_repository import get_customer
 from app.repositories.menu_item_repository import get_menu_item
-
 from app.repositories.order_item_repository import (
     create_order_item,
     get_order_items,
 )
-
 from app.repositories.order_repository import (
     create_order,
     get_all_orders,
@@ -15,6 +15,8 @@ from app.repositories.order_repository import (
     update_order_status,
     get_orders_by_status,
 )
+
+
 VALID_STATUS_TRANSITIONS = {
     "PENDING": {"CONFIRMED", "CANCELLED"},
     "CONFIRMED": {"PREPARING", "CANCELLED"},
@@ -31,17 +33,29 @@ def create_new_order(customer_id, items):
     if customer is None:
         raise ValueError("Customer not found.")
 
-    if not items:
+    if not isinstance(items, list) or not items:
         raise ValueError(
             "An order must contain at least one menu item."
         )
 
     order_items = []
-    total_amount = 0
+    total_amount = Decimal("0.00")
 
     for item in items:
+        if not isinstance(item, dict):
+            raise ValueError("Each order item must be an object.")
+
         menu_item_id = item.get("menu_item_id")
         quantity = item.get("quantity")
+
+        if (
+            not isinstance(menu_item_id, int)
+            or isinstance(menu_item_id, bool)
+            or menu_item_id <= 0
+        ):
+            raise ValueError(
+                "menu_item_id must be a positive integer."
+            )
 
         if (
             not isinstance(quantity, int)
@@ -64,8 +78,7 @@ def create_new_order(customer_id, items):
                 f"Menu item {menu_item_id} is not available."
             )
 
-        price = menu_item["price"]
-
+        price = Decimal(str(menu_item["price"]))
         total_amount += price * quantity
 
         order_items.append(
@@ -79,7 +92,7 @@ def create_new_order(customer_id, items):
             connection,
             customer_id,
             "PENDING",
-            total_amount
+            total_amount,
         )
 
         for menu_item_id, quantity, price in order_items:
@@ -88,11 +101,10 @@ def create_new_order(customer_id, items):
                 order_id,
                 menu_item_id,
                 quantity,
-                price
+                price,
             )
 
         connection.commit()
-
         return order_id
 
     except Exception:
@@ -118,16 +130,20 @@ def find_order(order_id):
 def list_orders():
     return get_all_orders()
 
+
 def change_order_status(order_id, new_status):
     order = get_order(order_id)
 
     if order is None:
         raise ValueError("Order not found.")
 
+    if not isinstance(new_status, str):
+        raise ValueError("Order status must be text.")
+
+    new_status = new_status.strip().upper()
+
     if new_status not in VALID_STATUS_TRANSITIONS:
-        raise ValueError(
-            f"Invalid order status: {new_status}"
-        )
+        raise ValueError(f"Invalid order status: {new_status}")
 
     current_status = order["status"]
 
@@ -137,15 +153,13 @@ def change_order_status(order_id, new_status):
             f"{current_status} to {new_status}."
         )
 
-    rows_updated = update_order_status(
-        order_id,
-        new_status
-    )
+    rows_updated = update_order_status(order_id, new_status)
 
     if rows_updated == 0:
         raise ValueError("Order not found.")
 
     return get_order(order_id)
+
 
 def list_orders_by_status(status):
     if not isinstance(status, str):
@@ -154,9 +168,6 @@ def list_orders_by_status(status):
     status = status.strip().upper()
 
     if status not in VALID_STATUS_TRANSITIONS:
-        raise ValueError(
-            f"Invalid order status: {status}"
-        )
+        raise ValueError(f"Invalid order status: {status}")
 
     return get_orders_by_status(status)
-

@@ -1,136 +1,114 @@
-# Food Delivery Order Management System
+# Food Delivery Order Tracker
 
-A simple food delivery application developed as an individual learning project. The system focuses on managing customers, menu items, and orders while practicing core software-development concepts.
-
-## Problem Statement
-
-Small food-delivery operations need a simple way to manage customer information, menu items, orders, and pending work.
-
-This application provides basic CRUD operations, validation, search/filtering, and simple reports through a web interface.
+A lightweight food-delivery operations app for managing customers, menu items, and orders. It includes a responsive browser interface, a JSON REST API, SQLite persistence, and automated tests.
 
 ## Features
 
-- Customer/profile management
-- Menu item management
-- Food order management
-- CRUD operations
-- Search and filtering
-- Input and business validation
-- Order status tracking
-- Simple dashboard/reports
-- Exception handling
-- Relational database
-- Basic REST API
-- Basic test cases
+- Customer and menu-item create, view, update, delete, and name search
+- Availability filtering for menu items
+- Multi-item order creation with server-calculated prices and totals
+- Order history, status filtering, and validated status transitions
+- Dashboard counts, order-status summary, recent orders, and delivered order value
+- Responsive UI served by Flask; no frontend build step or external runtime service
+- SQLite foreign-key enforcement and transaction-safe order creation
 
-## Core Entities
+## Requirements
 
-```text
-Customer
-MenuItem
-Order
-OrderItem
+- Python 3.10 or later
+- Dependencies listed in `requirements.txt`
+
+## Run locally
+
+From the project directory, create/activate a virtual environment and install dependencies:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 ```
 
-Relationships:
+Initialize the SQLite database and optionally add sample data (safe to rerun):
 
-```text
-Customer 1 ──── * Order
-Order    1 ──── * OrderItem
-MenuItem 1 ──── * OrderItem
+```powershell
+python database\init_db.py
+python database\seed_db.py
 ```
 
-## Tech Stack
+Start the app:
 
-- **Backend:** Python + Flask/FastAPI
-- **Database:** SQLite / PostgreSQL
-- **Frontend:** HTML, CSS, JavaScript
-- **Testing:** pytest
-- **Version Control:** Git + GitHub
-
-## Project Structure
-
-```text
-food-delivery-tracker/
-├── app/
-│   ├── models/
-│   ├── routes/
-│   ├── services/
-│   ├── repositories/
-│   └── validators/
-├── tests/
-├── database/
-├── templates/
-├── static/
-├── requirements.txt
-├── README.md
-└── run.py
+```powershell
+python run.py
 ```
 
-## Main Order Flow
+Open [http://127.0.0.1:5000](http://127.0.0.1:5000). To use another SQLite file, set `FOOD_DELIVERY_DATABASE` to its path before starting the app. The database parent folder is created automatically. `database\reset_db.py` deletes and recreates the development database; it is destructive.
+
+## Web interface
+
+The home page provides the dashboard and forms for customer management, menu management, and order creation/status updates. Search fields filter customers and menu items. Order status choices follow the allowed flow:
 
 ```text
-PENDING
-   ↓
-CONFIRMED
-   ↓
-PREPARING
-   ↓
-OUT_FOR_DELIVERY
-   ↓
-DELIVERED
+PENDING -> CONFIRMED -> PREPARING -> OUT_FOR_DELIVERY -> DELIVERED
+   |           |            |
+   +-----------+------------+-> CANCELLED
 ```
 
-Orders may also be cancelled according to business rules.
+The dashboard's delivered value sums the totals of delivered orders; it is an operational report, not a payment ledger.
 
-## Learning Objectives
+## REST API
 
-This project is intended to strengthen:
+All responses use JSON except the browser UI.
 
-- Programming fundamentals
-- OOP and data structures
-- SQL and relational databases
-- CRUD and validation
-- Exception handling and debugging
-- HTTP/API concepts
-- Git/GitHub
-- Testing and documentation
-- Problem decomposition and Design Thinking
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/health` | Health check |
+| `GET` | `/api/dashboard` | Counts, status totals, recent orders, delivered value |
+| `GET`, `POST` | `/api/customers` | List/search or create customers |
+| `GET`, `PUT`, `DELETE` | `/api/customers/<id>` | Read, update, or delete a customer |
+| `GET`, `POST` | `/api/menu-items` | List/search/filter or create menu items |
+| `GET`, `PUT`, `DELETE` | `/api/menu-items/<id>` | Read, update, or delete a menu item |
+| `GET`, `POST` | `/orders` | List/filter orders or create an order |
+| `GET` | `/orders/<id>` | Read an order and its line items |
+| `PATCH` | `/orders/<id>/status` | Move an order to a valid next status |
 
-## Development Roadmap
+Use `?search=<text>` on customer/menu list endpoints, `?available=true` for available menu items, and `?status=<status>` on `/orders`. Creating an order requires a positive `customer_id` and a non-empty `items` array; each item contains a positive `menu_item_id` and `quantity`.
 
-- [ ] Requirements & Design
-- [ ] Database Design
-- [ ] Customer CRUD
-- [ ] Menu CRUD
-- [ ] Order Management
-- [ ] Validation & Exceptions
-- [ ] Search & Filtering
-- [ ] REST API
-- [ ] Dashboard
-- [ ] Simple Web UI
-- [ ] Testing
-- [ ] Documentation
+Example:
 
-## Out of Scope
+```json
+{
+  "customer_id": 1,
+  "items": [
+    { "menu_item_id": 1, "quantity": 2 }
+  ]
+}
+```
 
-Version 1 will not include:
+## Tests
 
-- Online payments
-- GPS/live tracking
-- Delivery partner management
-- Reviews/ratings
-- Notifications
-- Advanced authentication
-- Complex analytics
+```powershell
+python -m pytest -q
+```
 
-## Project Status
+Tests create an isolated SQLite database for each test. No production data is used.
 
-**Status:** Planning / Initial Development
+## Project scope
 
-This project is primarily intended for learning and is not a production-ready food delivery platform.
+This is a learning project and is not production-ready. Version 1 intentionally excludes user authentication, online payments, restaurant management, delivery-partner/GPS tracking, notifications, reviews, and complex analytics.
+
+## Project structure
+
+```text
+app/
+  repositories/   SQLite queries and transaction helpers
+  routes/         Flask API and web routes
+  services/       Validation and order business rules
+  static/         Browser JavaScript and CSS
+  templates/      Main web page
+database/         SQLite schema and setup/seed/reset scripts
+tests/            pytest test suite
+run.py            Local Flask entry point
+```
 
 ## Author
 
-**Name:** Sumit Singh Bora 
-**GitHub:** sumit-sb-10
+Sumit Singh Bora · [GitHub](https://github.com/sumit-sb-10)

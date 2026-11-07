@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6f2">
+  <title>Food Delivery Order Tracker</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">Fork &amp; Track</a>
+    <nav aria-label="Main navigation">
+      <a href="#dashboard">Dashboard</a>
+      <a href="#customers">Customers</a>
+      <a href="#menu">Menu</a>
+      <a href="#orders">Orders</a>
+    </nav>
+    <span class="api-indicator"><span></span> Tracker online</span>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p class="eyebrow">FOOD DELIVERY OPERATIONS</p>
+      <h1>Good service starts with a clear view.</h1>
+      <p>Manage your customers, menu, and orders from one simple workspace.</p>
+    </section>
+
+    <div id="notice" class="notice" role="status" hidden></div>
+
+    <section id="dashboard" class="section">
+      <div class="section-heading">
+        <div><p class="eyebrow">AT A GLANCE</p><h2>Dashboard</h2></div>
+        <button class="button button-light" id="refresh-button" type="button">Refresh data</button>
+      </div>
+      <div id="summary-cards" class="summary-grid" aria-live="polite"></div>
+      <div class="dashboard-grid">
+        <article class="panel">
+          <div class="panel-heading"><h3>Order status</h3><span class="muted">All orders</span></div>
+          <div id="status-summary" class="status-list"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-heading"><h3>Recent orders</h3><a href="#orders">View all</a></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Order</th><th>Status</th><th>Total</th></tr></thead>
+              <tbody id="recent-orders"></tbody></table>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="customers" class="section">
+      <div class="section-heading">
+        <div><p class="eyebrow">PEOPLE</p><h2>Customers</h2></div>
+        <input id="customer-search" class="search" type="search" placeholder="Search by name" aria-label="Search customers by name">
+      </div>
+      <div class="management-grid">
+        <form id="customer-form" class="panel form-panel">
+          <h3 id="customer-form-title">Add a customer</h3>
+          <input id="customer-id" type="hidden">
+          <label>Name<input id="customer-name" name="name" required maxlength="100"></label>
+          <label>Phone<input id="customer-phone" name="phone" required maxlength="15"></label>
+          <label>Address<input id="customer-address" name="address" required maxlength="255"></label>
+          <div class="form-actions"><button class="button" type="submit">Save customer</button><button class="button button-light" id="customer-cancel" type="button" hidden>Cancel edit</button></div>
+        </form>
+        <article class="panel list-panel">
+          <div class="panel-heading"><h3>Customer directory</h3><span id="customer-count" class="muted"></span></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Name</th><th>Phone</th><th>Address</th><th>Actions</th></tr></thead>
+              <tbody id="customers-list"></tbody></table>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="menu" class="section">
+      <div class="section-heading">
+        <div><p class="eyebrow">WHAT'S COOKING</p><h2>Menu</h2></div>
+        <input id="menu-search" class="search" type="search" placeholder="Search menu items" aria-label="Search menu items by name">
+      </div>
+      <div class="management-grid">
+        <form id="menu-form" class="panel form-panel">
+          <h3 id="menu-form-title">Add a menu item</h3>
+          <input id="menu-id" type="hidden">
+          <label>Item name<input id="menu-name" name="name" required maxlength="100"></label>
+          <label>Description<textarea id="menu-description" name="description" rows="2" maxlength="255"></textarea></label>
+          <label>Price<input id="menu-price" name="price" type="number" min="0.01" step="0.01" required></label>
+          <label class="checkbox-label"><input id="menu-available" name="available" type="checkbox" checked> Available to order</label>
+          <div class="form-actions"><button class="button" type="submit">Save menu item</button><button class="button button-light" id="menu-cancel" type="button" hidden>Cancel edit</button></div>
+        </form>
+        <article class="panel list-panel">
+          <div class="panel-heading"><h3>Menu items</h3><span id="menu-count" class="muted"></span></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Item</th><th>Price</th><th>Availability</th><th>Actions</th></tr></thead>
+              <tbody id="menu-list"></tbody></table>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="orders" class="section">
+      <div class="section-heading">
+        <div><p class="eyebrow">FROM CART TO DOOR</p><h2>Orders</h2></div>
+      </div>
+      <div class="management-grid">
+        <form id="order-form" class="panel form-panel">
+          <h3>Create an order</h3>
+          <label>Customer<select id="order-customer" required><option value="">Choose a customer</option></select></label>
+          <div class="panel-heading order-items-heading"><h4>Order items</h4><button class="button button-light button-small" id="add-order-item" type="button">Add item</button></div>
+          <div id="order-items"></div>
+          <button class="button" type="submit">Place order</button>
+        </form>
+        <article class="panel list-panel">
+          <div class="panel-heading"><h3>Order history</h3><select id="order-filter" aria-label="Filter orders by status"><option value="">All statuses</option></select></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Update</th></tr></thead>
+              <tbody id="orders-list"></tbody></table>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+  <footer>Food Delivery Order Tracker <span>Simple tools for a smoother service.</span></footer>
+</body>
+</html>

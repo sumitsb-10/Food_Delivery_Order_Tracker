@@ -1,4 +1,4 @@
-CREATE TABLE customers (
+CREATE TABLE IF NOT EXISTS customers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(100) NOT NULL,
     phone VARCHAR(15) NOT NULL UNIQUE,
@@ -6,7 +6,7 @@ CREATE TABLE customers (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE menu_items (
+CREATE TABLE IF NOT EXISTS menu_items (
     id INTEGER PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(255),
@@ -15,7 +15,7 @@ CREATE TABLE menu_items (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     id INTEGER PRIMARY KEY,
     customer_id INTEGER NOT NULL,
     status VARCHAR(30) NOT NULL
@@ -32,7 +32,7 @@ CREATE TABLE orders (
     FOREIGN KEY (customer_id) REFERENCES customers(id)
 );
 
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
     id INTEGER PRIMARY KEY,
     order_id INTEGER NOT NULL,
     menu_item_id INTEGER NOT NULL,
